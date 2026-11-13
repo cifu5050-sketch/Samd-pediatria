@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Software as a Medical Device (SaMD) para la optimización diagnóstica y el desescalamiento antimicrobiano en infecciones del sistema nervioso central en pediatría.">
+<meta name="robots" content="index, follow">
+<title>SaMD - CDSS Infecciones del SNC en Pediatría</title>
+<style>
+  * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; box-sizing: border-box; }
+  body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; background: #f4f7f9; color: #1e293b; margin: 0; padding: 20px; line-height: 1.45; }
+  .container { max-width: 1260px; margin: 0 auto; }
+  header { background: linear-gradient(135deg, #0f4c81, #1b6ca8); color: #fff; padding: 20px 26px; border-radius: 12px; margin-bottom: 18px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 14px; box-shadow: 0 4px 12px rgba(15, 76, 129, 0.16); }
+  header h1 { margin: 0 0 5px 0; font-size: 1.35rem; }
+  header p { margin: 0; font-size: 0.88rem; opacity: 0.92; }
+  .badge { background: rgba(255,255,255,0.2); border: 1px solid rgba(255,255,255,0.35); padding: 6px 14px; border-radius: 99px; font-size: 0.8rem; font-weight: 700; white-space: nowrap; }
+  .demo-bar { background: #fff; border: 1px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; margin-bottom: 18px; display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+  .btn-preset { background: #e8f1f8; color: #0f4c81; border: 1px solid #b6d4ee; padding: 6px 10px; border-radius: 6px; font-size: 0.78rem; font-weight: 600; cursor: pointer; transition: 0.15s; }
+  .btn-preset:hover { background: #0f4c81; color: #fff; }
+  .grid-main { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; align-items: start; }
+  @media (max-width: 960px) { .grid-main { grid-template-columns: 1fr; } }
+  .card { background: #fff; border: 1px solid #cbd5e1; border-radius: 12px; padding: 18px; margin-bottom: 16px; box-shadow: 0 2px 5px rgba(0,0,0,0.03); }
+  .card-title { font-size: 0.98rem; font-weight: 700; color: #0f4c81; border-bottom: 2px solid #e8f1f8; padding-bottom: 8px; margin-bottom: 14px; display: flex; justify-content: space-between; align-items: center; }
+  .form-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .full { grid-column: 1 / -1; }
+  label { display: block; font-size: 0.8rem; font-weight: 600; color: #334155; margin-bottom: 4px; }
+  input[type="number"], input[type="text"], select { width: 100%; padding: 8px 10px; border: 1px solid #cbd5e1; border-radius: 7px; font-size: 0.9rem; background: #fff; color: #1e293b; }
+  .check-group { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 8px; }
+  .check-item { display: flex; align-items: center; gap: 8px; background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 7px; font-size: 0.82rem; cursor: pointer; }
+  .bms-note { background: #f0f9ff; border: 1px solid #bae6fd; color: #0369a1; padding: 8px 12px; border-radius: 7px; font-size: 0.79rem; margin-bottom: 12px; }
+  .score-box { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 14px; }
+  .tile { background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 10px; text-align: center; }
+  .tile .lbl { font-size: 0.72rem; color: #64748b; font-weight: 700; text-transform: uppercase; }
+  .tile .val { font-size: 1.3rem; font-weight: 800; color: #0f4c81; margin: 2px 0; }
+  .tile .sub { font-size: 0.72rem; color: #64748b; }
+  .banner { border-radius: 10px; padding: 15px; border-left: 6px solid; margin-bottom: 14px; }
+  .green { background: #dcfce7; border-color: #16a34a; color: #14532d; }
+  .amber { background: #fef3c7; border-color: #d97706; color: #78350f; }
+  .red { background: #fee2e2; border-color: #dc2626; color: #7f1d1d; }
+  .purple { background: #f3e8ff; border-color: #7e22ce; color: #4c1d95; }
+  .b-head { font-size: 0.74rem; font-weight: 700; text-transform: uppercase; margin-bottom: 4px; }
+  .b-main { font-size: 1.12rem; font-weight: 800; margin-bottom: 5px; }
+  .b-sub { font-size: 0.86rem; }
+  .prob-bar-bg { width: 100%; height: 11px; background: #e2e8f0; border-radius: 99px; overflow: hidden; margin: 6px 0 14px 0; }
+  .prob-bar-fill { height: 100%; transition: width 0.3s ease; }
+  .bms-list { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; font-size: 0.81rem; }
+  .bms-row { display: flex; justify-content: space-between; padding: 3px 0; border-bottom: 1px dashed #e2e8f0; }
+  .bms-row:last-child { border-bottom: none; }
+  .bms-on { font-weight: 700; color: #dc2626; }
+  ul.actions { padding-left: 18px; margin: 6px 0 14px 0; font-size: 0.86rem; }
+  ul.actions li { margin-bottom: 6px; }
+  .btn-row { display: grid; grid-template-columns: 1.4fr 1fr; gap: 10px; margin-top: 12px; }
+  .btn-print { background: #0f4c81; color: #fff; border: none; padding: 11px 14px; border-radius: 8px; font-weight: 700; font-size: 0.86rem; cursor: pointer; }
+  .btn-print:hover { background: #09355c; }
+  .btn-txt { background: #f1f5f9; color: #0f4c81; border: 1px solid #94a3b8; padding: 11px 14px; border-radius: 8px; font-weight: 700; font-size: 0.84rem; cursor: pointer; }
+  .btn-txt:hover { background: #e2e8f0; }
+  .print-only-meta { display: none; font-size: 0.82rem; color: #334155; margin-bottom: 10px; border-bottom: 1px solid #cbd5e1; padding-bottom: 8px; }
+
+  /* Bibliografía y Telemetría de Visitas */
+  .ref-list { padding-left: 20px; font-size: 0.81rem; color: #334155; margin: 0; }
+  .ref-list li { margin-bottom: 6px; line-height: 1.4; }
+  .ref-list a { color: #0f4c81; text-decoration: none; }
+  .ref-list a:hover { text-decoration: underline; }
+
+  .telemetry-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; background: #0f172a; color: #f8fafc; padding: 14px 18px; border-radius: 10px; margin-bottom: 16px; font-size: 0.8rem; }
+  @media (max-width: 760px) { .telemetry-bar { grid-template-columns: 1fr 1fr; } }
+  .t-item { display: flex; flex-direction: column; border-right: 1px solid #334155; padding-right: 10px; }
+  .t-item:last-child { border-right: none; }
+  .t-lbl { font-size: 0.7rem; color: #94a3b8; text-transform: uppercase; font-weight: 700; letter-spacing: 0.4px; }
+  .t-val { font-size: 1.15rem; font-weight: 800; color: #38bdf8; margin-top: 2px; }
+  .t-sub { font-size: 0.71rem; color: #cbd5e1; margin-top: 2px; }
+
+  footer { margin-top: 18px; }
+  .legal-disclaimer { background: #fffbeb; border: 2px solid #f59e0b; border-left: 6px solid #d97706; color: #78350f; padding: 14px 18px; border-radius: 10px; font-size: 0.85rem; line-height: 1.5; margin-bottom: 14px; }
+  .legal-disclaimer strong { color: #92400e; display: block; margin-bottom: 3px; text-transform: uppercase; font-size: 0.78rem; letter-spacing: 0.5px; }
+  .footer-credits { text-align: center; font-size: 0.77rem; color: #64748b; padding: 10px 0; border-top: 1px solid #cbd5e1; }
+
+  @media print {
+    @page { size: letter portrait; margin: 10mm; }
+    body { background: #fff; padding: 0; font-size: 10pt; }
+    .demo-bar, .btn-row, .bms-note, .telemetry-bar { display: none !important; }
+    header { padding: 12px 16px; margin-bottom: 10px; border-radius: 8px; }
+    .grid-main { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .card { break-inside: avoid; page-break-inside: avoid; padding: 11px; margin-bottom: 10px; box-shadow: none; }
+    .print-only-meta { display: block; }
+    .legal-disclaimer { break-inside: avoid; page-break-inside: avoid; padding: 10px 14px; font-size: 9pt; }
+  }
+</style>
+</head>
+<body>
+<div class="container">
+  <header>
+    <div>
+      <h1>SaMD: Soporte a la Decisión Clínica (CDSS) — SNC Pediatría</h1>
+      <p>Optimización diagnóstica y desescalamiento antimicrobiano: Panel FilmArray ME + Bacterial Meningitis Score (BMS) + Proteína C Reactiva</p>
+    </div>
+    <div class="badge">SaMD v1.3 (GitHub Pages Ready)</div>
+  </header>
+
+  <div class="print-only-meta" id="meta_impresion"></div>
+
+  <div class="demo-bar">
+    <strong style="font-size:0.82rem; color:#475569;">Casos Clínicos de Prueba:</strong>
+    <button type="button" class="btn-preset" onclick="preset('ev0')">1. Enterovirus (BMS=0, PCR&lt;0.82)</button>
+    <button type="button" class="btn-preset" onclick="preset('ev1')">2. Enterovirus (BMS&ge;1, PCR&lt;0.82)</button>
+    <button type="button" class="btn-preset" onclick="preset('ev12')">3. Enterovirus (&lt;12h fiebre)</button>
+    <button type="button" class="btn-preset" onclick="preset('bact')">4. Meningitis Bacteriana</button>
+    <button type="button" class="btn-preset" onclick="preset('hsv')">5. Encefalitis HSV-1</button>
+    <button type="button" class="btn-preset" onclick="preset('multi')">6. Policoinfección (&ge;2 gérmenes)</button>
+    <button type="button" class="btn-preset" onclick="preset('gris0')">7. Panel Negativo (Zona Gris Viral)</button>
+    <button type="button" class="btn-preset" onclick="preset('gris1')">8. Panel Negativo (Alta Sospecha Bact.)</button>
+  </div>
+
+  <div class="grid-main">
+    <div>
+      <div class="card">
+        <div class="card-title"><span>1. Panel FilmArray ME (14 Dianas + Policoinfección) y Estado Clínico</span></div>
+        <div class="form-grid">
+          <div><label>ID Historia Clínica</label><input type="text" id="hc" value="HC-1042" oninput="calc()"></div>
+          <div><label>Edad (Meses)</label><input type="number" id="edad" value="36" oninput="calc()"></div>
+          <div class="full">
+            <label>Resultado del Panel FilmArray ME en LCR (Figura 1)</label>
+            <select id="fa" onchange="calc()">
+              <optgroup label="Sin Aislamiento">
+                <option value="NEGATIVO">Negativo (Sin detección en los 14 blancos — Flujograma 3)</option>
+              </optgroup>
+              <optgroup label="Policoinfección (Detección de 2 o más microorganismos)">
+                <option value="MULTI_BACT">Detectados 2 o más patógenos (Incluye al menos 1 Bacteria)</option>
+                <option value="MULTI_VIRAL">Detectados 2 o más patógenos (Combinación exclusivamente Viral)</option>
+              </optgroup>
+              <optgroup label="1. Bacterias (6 blancos del panel FilmArray ME)">
+                <option value="BACT_ECOLI">1. Escherichia coli K1</option>
+                <option value="BACT_HIB">2. Haemophilus influenzae</option>
+                <option value="BACT_LISTERIA">3. Listeria monocytogenes</option>
+                <option value="BACT_MENINGO">4. Neisseria meningitidis (Meningococo)</option>
+                <option value="BACT_GBS">5. Streptococcus agalactiae (SGB)</option>
+                <option value="BACT_PNEUMO">6. Streptococcus pneumoniae (Neumococo)</option>
+              </optgroup>
+              <optgroup label="2. Herpesvirus Neurotrópicos Primarios (3 blancos)">
+                <option value="HSV_1">7. Virus Herpes Simple 1 (HSV-1)</option>
+                <option value="HSV_2">8. Virus Herpes Simple 2 (HSV-2)</option>
+                <option value="VZV">9. Virus Varicela-Zóster (VZV)</option>
+              </optgroup>
+              <optgroup label="3. Virus Enterotrópicos (2 blancos — Flujograma 2)">
+                <option value="ENTEROVIRUS" selected>10. Enterovirus</option>
+                <option value="PARECHOVIRUS">11. Parechovirus humano (HPeV)</option>
+              </optgroup>
+              <optgroup label="4. Herpesvirus Latentes / Oportunistas (2 blancos)">
+                <option value="HHV6">12. Virus Herpes Humano 6 (HHV-6)</option>
+                <option value="CMV">13. Citomegalovirus (CMV)</option>
+              </optgroup>
+              <optgroup label="5. Levaduras (1 blanco)">
+                <option value="CRYPTO">14. Cryptococcus neoformans / gattii</option>
+              </optgroup>
+            </select>
+          </div>
+          <div class="full">
+            <label>Tiempo de Fiebre antes de Punción Lumbar (Figura 2)</label>
+            <select id="fiebre12" onchange="calc()">
+              <option value="si">&ge; 12 horas de evolución</option>
+              <option value="no">&lt; 12 horas de evolución (Cuadro precoz)</option>
+            </select>
+          </div>
+        </div>
+        <div class="check-group">
+          <label class="check-item"><input type="checkbox" id="toxico" onchange="calc()"> Aspecto tóxico / Inestable</label>
+          <label class="check-item"><input type="checkbox" id="inmuno" onchange="calc()"> Inmunosuprimido / Encefalopatía severa</label>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>2. Biomarcadores Independientes (Pleocitosis LCR y PCR Sérica)</span></div>
+        <div class="form-grid">
+          <div><label>Leucocitos en LCR (cél/&mu;L) [Corte &gt; 10]</label><input type="number" id="leuc_lcr" value="85" oninput="calc()"></div>
+          <div><label>Proteína C Reactiva - PCR (mg/dL) [Corte &ge; 0.82]</label><input type="number" id="pcr" step="0.01" value="0.35" oninput="calc()"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-title"><span>3. Escala Validada Paraclínica: Bacterial Meningitis Score (BMS: 0 a 4 puntos)</span></div>
+        <div class="bms-note">Cada criterio paraclínico positivo suma exactamente <strong>+1 punto</strong>. El árbol de decisión utiliza únicamente el puntaje consolidado (BMS = 0 vs BMS &ge; 1) sin duplicar variables.</div>
+        <div class="form-grid">
+          <div>
+            <label>1. Tinción de Gram de LCR (+1 pt)</label>
+            <select id="gram" onchange="calc()">
+              <option value="0">Negativa (0 pts)</option>
+              <option value="1">Positiva para bacterias (+1 pt)</option>
+            </select>
+          </div>
+          <div><label>2. ANC en LCR (cél/&mu;L) [&ge; 1000 = +1 pt]</label><input type="number" id="anc_lcr" value="20" oninput="calc()"></div>
+          <div><label>3. Proteínas LCR (mg/dL) [&ge; 80 = +1 pt]</label><input type="number" id="prot_lcr" value="42" oninput="calc()"></div>
+          <div><label>4. ANC en Sangre (cél/&mu;L) [&ge; 10000 = +1 pt]</label><input type="number" id="anc_san" value="5400" oninput="calc()"></div>
+        </div>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div class="card-title">
+          <span>Dictamen Automatizado del SaMD</span>
+          <span id="lbl_paciente" style="font-size:0.82rem; color:#64748b;">HC-1042 (36 meses)</span>
+        </div>
+        <div class="score-box">
+          <div class="tile"><div class="lbl">BMS Consolidado</div><div class="val" id="v_bms">0 / 4</div><div class="sub" id="s_bms">BMS Bajo (= 0)</div></div>
+          <div class="tile"><div class="lbl">LCR Pleocítico</div><div class="val" id="v_pleo">Sí (&gt;10)</div><div class="sub" id="s_pleo">85 cél/&mu;L</div></div>
+          <div class="tile"><div class="lbl">Corte PCR (0.82)</div><div class="val" id="v_pcr">&lt; 0.82</div><div class="sub" id="s_pcr">0.35 mg/dL</div></div>
+        </div>
+
+        <div id="banner" class="banner green">
+          <div class="b-head" id="b_ruta">Flujograma 2</div>
+          <div class="b-main" id="b_tit">SUSPENDER ABX Y CONSIDERAR ALTA</div>
+          <div class="b-sub" id="b_res">BMS = 0 y PCR &lt; 0.82 mg/dL.</div>
+        </div>
+
+        <div style="display:flex; justify-content:space-between; font-size:0.82rem; font-weight:700;">
+          <span>Oportunidad de Suspender Antibiótico Empírico:</span><span id="p_txt">98%</span>
+        </div>
+        <div class="prob-bar-bg"><div id="p_bar" class="prob-bar-fill" style="width:98%; background:#16a34a;"></div></div>
+
+        <div class="bms-list">
+          <div style="font-weight:700; margin-bottom:6px; text-transform:uppercase; font-size:0.77rem;">Auditoría de Componentes Paraclínicos del BMS (0 a 4 pts)</div>
+          <div class="bms-row" id="r_gram"><span>1. Tinción de Gram de LCR positiva</span><span>0 pts</span></div>
+          <div class="bms-row" id="r_alcr"><span>2. ANC en LCR &ge; 1.000 cél/&mu;L</span><span>0 pts</span></div>
+          <div class="bms-row" id="r_prot"><span>3. Proteínas en LCR &ge; 80 mg/dL</span><span>0 pts</span></div>
+          <div class="bms-row" id="r_asan"><span>4. ANC en sangre periférica &ge; 10.000 cél/&mu;L</span><span>0 pts</span></div>
+        </div>
+
+        <div style="font-weight:700; font-size:0.85rem; color:#0f4c81;">Conductas Recomendadas por el Flujograma:</div>
+        <ul class="actions" id="acciones"></ul>
+
+        <div class="btn-row">
+          <button type="button" class="btn-print" onclick="imprimirReporte()">🖨️ Imprimir / Guardar en PDF (Cmd+P)</button>
+          <button type="button" class="btn-txt" onclick="descargarTxt()">📄 Descargar Nota Clínica (.txt)</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECCIÓN DE REFERENCIAS BIBLIOGRÁFICAS DEL ABSTRACT -->
+  <div class="card">
+    <div class="card-title"><span>Referencias Bibliográficas de Respaldo Científico y Regulatorio (SaMD)</span></div>
+    <ol class="ref-list">
+      <li>GBD 2023 Meningitis Collaborators. Global, regional, and national burden of meningitis, its risk factors, and aetiologies, 1990–2023: a systematic analysis for the Global Burden of Disease Study 2023. <em>Lancet Neurol</em>. 2026;25(5):451-468. <a href="https://doi.org/10.1016/S1474-4422(26)00101-8" target="_blank" rel="noopener">doi:10.1016/S1474-4422(26)00101-8</a></li>
+      <li>Trujillo-Gomez J, Tsokani S, Arango-Ferreira C, Atehortua-Muñoz S, Jimenez-Villegas MJ, Serrano-Tabares C, et al. Biofire FilmArray Meningitis/Encephalitis panel for the aetiological diagnosis of central nervous system infections: a systematic review and diagnostic test accuracy meta-analysis. <em>EClinicalMedicine</em>. 2022;44:101275. <a href="https://doi.org/10.1016/j.eclinm.2022.101275" target="_blank" rel="noopener">doi:10.1016/j.eclinm.2022.101275</a></li>
+      <li>Hagen A, Eichinger A, Meyer-Buehn M, Schober T, Huebner J. Comparison of antibiotic and acyclovir usage before and after the implementation of an on-site FilmArray meningitis/encephalitis panel in an academic tertiary pediatric hospital: a retrospective observational study. <em>BMC Pediatr</em>. 2020;20(1):56. <a href="https://doi.org/10.1186/s12887-020-1944-2" target="_blank" rel="noopener">doi:10.1186/s12887-020-1944-2</a></li>
+      <li>Churcher LM, Bartlett AW, Pendle S, Slade R, Williams PCM. Impact of the BioFire FilmArray Meningitis-Encephalitis Panel on management of suspected paediatric central nervous system infections: a single-centre retrospective cohort study. <em>J Paediatr Child Health</em>. 2026;62(4):586-593. <a href="https://doi.org/10.1111/jpc.70303" target="_blank" rel="noopener">doi:10.1111/jpc.70303</a></li>
+      <li>Messacar K, Parker SK, Todd JK, Dominguez SR. Implementation of rapid molecular infectious disease diagnostics: the role of diagnostic and antimicrobial stewardship. <em>J Clin Microbiol</em>. 2017;55(3):715-723. <a href="https://doi.org/10.1128/JCM.02264-16" target="_blank" rel="noopener">doi:10.1128/JCM.02264-16</a></li>
+      <li>Nigrovic LE, Kuppermann N, Macias CG, et al. Clinical prediction rule for identifying children with cerebrospinal fluid pleocytosis at very low risk of bacterial meningitis. <em>JAMA</em>. 2007;297(1):52-60. <a href="https://doi.org/10.1001/jama.297.1.52" target="_blank" rel="noopener">doi:10.1001/jama.297.1.52</a></li>
+      <li>Mintegi S, García S, Martín MJ, et al. Clinical prediction rule for distinguishing bacterial from aseptic meningitis. <em>Pediatrics</em>. 2020;146(3):e20201126. <a href="https://doi.org/10.1542/peds.2020-1126" target="_blank" rel="noopener">doi:10.1542/peds.2020-1126</a></li>
+      <li>IMDRF SaMD Working Group. Software as a Medical Device (SaMD): Clinical Evaluation. IMDRF/SaMD WG/N41FINAL:2017. International Medical Device Regulators Forum; 2017.</li>
+    </ol>
+  </div>
+
+  <!-- BARRA DE TELEMETRÍA Y CONTADOR DE VISITAS (HUMANOS + AGENTES IA) -->
+  <div class="telemetry-bar">
+    <div class="t-item">
+      <span class="t-lbl">Visitas Totales (Global / Local)</span>
+      <span class="t-val" id="cnt_total">Cargando...</span>
+      <span class="t-sub">Accesos acumulados al SaMD</span>
+    </div>
+    <div class="t-item">
+      <span class="t-lbl">Accesos Médicos / Humanos</span>
+      <span class="t-val" id="cnt_human">0</span>
+      <span class="t-sub">Navegadores clínicos estándar</span>
+    </div>
+    <div class="t-item">
+      <span class="t-lbl">Visitas de IA / Crawlers / Bots</span>
+      <span class="t-val" id="cnt_ai">0</span>
+      <span class="t-sub">GPTBot, ClaudeBot, Google-Extended, Perplexity</span>
+    </div>
+    <div class="t-item">
+      <span class="t-lbl">Agente de Sesión Detectado</span>
+      <span class="t-val" id="agent_type" style="font-size:0.95rem; color:#4ade80;">Verificando...</span>
+      <span class="t-sub" id="agent_ua">User-Agent activo</span>
+    </div>
+  </div>
+
+  <!-- PIE DE PÁGINA CON DISCLAIMER LEGAL INELUDIBLE -->
+  <footer>
+    <div class="legal-disclaimer">
+      <strong>⚖️ Aviso Legal y Regulatorio Ineludible (Normativa Colombiana — SaMD / CDSS)</strong>
+      "Esta herramienta de soporte a la decisión clínica (CDSS) se basa en la validación retrospectiva de marcadores en LCR. No reemplaza el juicio clínico del profesional tratante, quien asume la responsabilidad final de la terapia instaurada y el manejo del paciente."
+    </div>
+    <div class="footer-credits">
+      Desarrollo y validación retrospectiva de un Software as a Medical Device (SaMD) en infecciones del SNC en pediatría — Proyecto Doctoral (Medellín, Colombia, 2026).
+    </div>
+  </footer>
+</div>
+
+<script>
+function mark(id, on) {
+  var el = document.getElementById(id);
+  el.className = on ? 'bms-row bms-on' : 'bms-row';
+  el.children[1].textContent = on ? '+1 pt' : '0 pts';
+}
+
+function calc() {
+  var hc = document.getElementById('hc').value || 'Sin-ID';
+  var edad = document.getElementById('edad').value || '0';
+  var fa = document.getElementById('fa').value;
+  var f12 = document.getElementById('fiebre12').value === 'si';
+  var tox = document.getElementById('toxico').checked;
+  var inm = document.getElementById('inmuno').checked;
+  var leuc = parseFloat(document.getElementById('leuc_lcr').value) || 0;
+  var pcr = parseFloat(document.getElementById('pcr').value) || 0;
+
+  var p1 = document.getElementById('gram').value === '1' ? 1 : 0;
+  var p2 = (parseFloat(document.getElementById('anc_lcr').value) || 0) >= 1000 ? 1 : 0;
+  var p3 = (parseFloat(document.getElementById('prot_lcr').value) || 0) >= 80 ? 1 : 0;
+  var p4 = (parseFloat(document.getElementById('anc_san').value) || 0) >= 10000 ? 1 : 0;
+
+  mark('r_gram', p1===1); mark('r_alcr', p2===1); mark('r_prot', p3===1); mark('r_asan', p4===1);
+
+  var bms = p1 + p2 + p3 + p4;
+  var bmsAlto = bms >= 1;
+  var pleo = leuc > 10;
+  var pcrBaja = pcr < 0.82;
+
+  document.getElementById('lbl_paciente').textContent = hc + ' (' + edad + ' meses)';
+  document.getElementById('meta_impresion').textContent = 'REPORTE CLÍNICO SaMD | Historia Clínica: ' + hc + ' | Edad: ' + edad + ' meses | Fecha: ' + new Date().toLocaleString('es-CO');
+  document.getElementById('v_bms').textContent = bms + ' / 4';
+  document.getElementById('s_bms').textContent = bmsAlto ? 'BMS Alto (>= 1)' : 'BMS Bajo (= 0)';
+  document.getElementById('v_pleo').textContent = pleo ? 'Sí (>10)' : 'No (<=10)';
+  document.getElementById('s_pleo').textContent = leuc + ' cél/µL';
+  document.getElementById('v_pcr').textContent = pcrBaja ? '< 0.82' : '>= 0.82';
+  document.getElementById('s_pcr').textContent = pcr.toFixed(2) + ' mg/dL';
+
+  var ruta='', tit='', res='', cls='green', prob=0, col='#16a34a', act=[];
+
+  if (fa.indexOf('BACT_') === 0 || fa === 'MULTI_BACT') {
+    ruta = fa === 'MULTI_BACT' ? 'Figura 1 — Policoinfección con Bacteria Detectada' : 'Figura 1 — Rama 1: Bacteria Detectada en FilmArray ME';
+    tit = 'MANTENER ABX A DOSIS MENÍNGEA Y AISLAR SEGÚN GERMEN';
+    res = 'Criterio de seguridad del 100%: Mantener terapia antibiótica dirigida a dosis meníngea.';
+    cls = 'red'; prob = 0; col = '#dc2626';
+    act = ['Mantener ABX intravenoso a dosis meníngea según patógeno identificado.', 'Instaurar aislamiento y quimioprofilaxis de contactos si corresponde (Meningococo / H. influenzae).', 'Suspender Aciclovir empírico si se descarta coinfección herpética.'];
+  } else if (fa === 'HSV_1' || fa === 'HSV_2' || fa === 'VZV') {
+    ruta = 'Figura 1 — Rama 2: HSV-1/2 o VZV';
+    tit = 'ACICLOVIR IV + SOLICITAR RM Y EEG';
+    res = 'Continuar terapia antiviral IV y estudios de neuroimagen y electrofisiología.';
+    cls = 'purple'; prob = (!bmsAlto && pcrBaja) ? 85 : 45; col = '#7e22ce';
+    act = ['Aciclovir IV a dosis meníngea/encefalítica.', 'Solicitar Resonancia Magnética (RM) cerebral y EEG.', (!bmsAlto && pcrBaja) ? 'Suspender ABX antibacteriano empírico (BMS=0 y PCR<0.82).' : 'Vigilar cultivos a 48-72h antes de suspender ABX.'];
+  } else if (fa === 'ENTEROVIRUS' || fa === 'PARECHOVIRUS' || fa === 'MULTI_VIRAL') {
+    if (!f12) {
+      ruta = 'Figura 2 — Enterovirus / Parechovirus: Fiebre < 12 horas';
+      tit = 'PRECAUCIÓN: MANTENER ABX O REPETIR PCR EN 12 H';
+      res = 'La proteína C reactiva puede ser falsamente baja en las primeras 12 horas de evolución.';
+      cls = 'amber'; prob = 30; col = '#d97706';
+      act = ['Mantener observación y repetir proteína C reactiva sérica en 12 horas.', 'Suspender Aciclovir IV si no hay sospecha herpética.'];
+    } else if (!bmsAlto && pcrBaja && !tox) {
+      ruta = 'Figuras 1 y 2 — Enterovirus / Parechovirus: BMS = 0 y PCR < 0.82 mg/dL';
+      tit = 'SUSPENDER ABX Y CONSIDERAR ALTA SI TOLERA VO';
+      res = 'Muy bajo riesgo bacteriano con evolución > 12h.';
+      cls = 'green'; prob = 98; col = '#16a34a';
+      act = ['Suspender antibióticos IV de inmediato.', 'Considerar egreso hospitalario si tolera vía oral.'];
+    } else if (bmsAlto && pcrBaja && !tox) {
+      ruta = 'Figura 2 — Enterovirus / Parechovirus: BMS >= 1 y PCR < 0.82 mg/dL (Estable)';
+      tit = 'SUSPENDER ABX (PLEOCITOSIS VIRAL)';
+      res = 'Pleocitosis viral con baja respuesta inflamatoria sistémica.';
+      cls = 'green'; prob = 88; col = '#16a34a';
+      act = ['Suspender antibióticos IV (pleocitosis viral).', 'Mantener observación clínica y reevaluar síntomas.'];
+    } else {
+      ruta = 'Figura 2 — Enterovirus / Parechovirus: PCR >= 0.82 mg/dL o Aspecto Tóxico';
+      tit = 'MANTENER ABX HASTA CULTIVOS A 48 H';
+      res = 'No se descarta coinfección bacteriana por PCR elevada o clínica tóxica.';
+      cls = 'amber'; prob = 15; col = '#d97706';
+      act = ['Mantener antibióticos hasta cultivos a 48 horas.', 'Reevaluar síntomas en hospitalización.'];
+    }
+  } else if (fa === 'HHV6' || fa === 'CMV') {
+    if (inm) {
+      ruta = 'Figura 1 — Rama 4: HHV-6 o CMV (Inmunosuprimido / Encefalopatía)';
+      tit = 'TRATAR CON GANCICLOVIR';
+      res = 'Riesgo de enfermedad activa en huésped inmunocomprometido o con encefalopatía severa.';
+      cls = 'purple'; prob = 25; col = '#7e22ce';
+      act = ['Iniciar Ganciclovir IV.', 'Evaluar carga viral cuantitativa y seguimiento por infectología.'];
+    } else {
+      ruta = 'Figura 1 — Rama 4: HHV-6 o CMV (Inmunocompetente)';
+      tit = 'OBSERVAR — RIESGO DE ciHHV-6';
+      res = 'Probable integración cromosómica (ciHHV-6) en paciente inmunocompetente.';
+      cls = 'green'; prob = (!bmsAlto && pcrBaja) ? 85 : 50; col = '#16a34a';
+      act = ['Observar sin iniciar antiviral.', 'Desescalar ABX si BMS=0 y PCR < 0.82 mg/dL.'];
+    }
+  } else if (fa === 'CRYPTO') {
+    ruta = 'Figura 1 — Rama 5: Cryptococcus';
+    tit = 'ANFOTERICINA + FLUCITOSINA, MEDIR PRESIÓN LCR Y DESCARTAR VIH';
+    res = 'Meningitis fúngica confirmada.';
+    cls = 'red'; prob = 10; col = '#dc2626';
+    act = ['Iniciar Anfotericina B + Flucitosina.', 'Medir presión de apertura de LCR y descartar VIH.'];
+  } else {
+    if (!pleo && !tox) {
+      ruta = 'Figura 3 — Panel Negativo sin Pleocitosis (<= 10 cél/µL)';
+      tit = 'RIESGO MUY BAJO — EVALUAR EGRESO';
+      res = 'LCR normal sin pleocitosis y FilmArray ME negativo.';
+      cls = 'green'; prob = 95; col = '#16a34a';
+      act = ['Suspender antibióticos empíricos.', 'Evaluar egreso hospitalario.'];
+    } else if (!bmsAlto && pcrBaja && !tox) {
+      ruta = 'Figura 3 — Zona Gris: BMS = 0 y PCR < 0.82 mg/dL';
+      tit = 'PROBABLE VIRAL O NO INFECCIOSA: SUSPENDER ABX Y OBSERVAR';
+      res = 'Meningitis aséptica con panel negativo y bajo riesgo bacteriano.';
+      cls = 'green'; prob = 90; col = '#16a34a';
+      act = ['Suspender ABX empíricos.', 'Observar y reevaluar causas no infecciosas.'];
+    } else if (bmsAlto && pcrBaja && !tox) {
+      ruta = 'Figura 3 — Zona Gris: BMS >= 1 y PCR < 0.82 mg/dL';
+      tit = 'BAJA SOSPECHA BACTERIANA: CONSIDERAR SUSPENDER ABX / OBSERVAR';
+      res = 'BMS >= 1 pero PCR sérica baja (< 0.82 mg/dL) y paciente estable.';
+      cls = 'amber'; prob = 75; col = '#16a34a';
+      act = ['Considerar suspender ABX bajo observación.', 'Vigilar cultivos y causas no infecciosas.'];
+    } else {
+      ruta = 'Figuras 1 y 3 — Zona Gris: BMS >= 1 y PCR >= 0.82 mg/dL o Aspecto Tóxico';
+      tit = 'ALTA SOSPECHA BACTERIANA: MANTENER ABX EMPÍRICOS (CULTIVOS 72 H)';
+      res = 'Sospecha de bacteria no incluida en el panel.';
+      cls = 'red'; prob = 0; col = '#dc2626';
+      act = ['Mantener ABX empíricos y esperar cultivos a 72 horas.', 'Buscar TB / bacterias atípicas o no incluidas en el panel.'];
+    }
+  }
+
+  document.getElementById('banner').className = 'banner ' + cls;
+  document.getElementById('b_ruta').textContent = ruta;
+  document.getElementById('b_tit').textContent = tit;
+  document.getElementById('b_res').textContent = res;
+  document.getElementById('p_txt').textContent = prob + '%';
+  document.getElementById('p_bar').style.width = prob + '%';
+  document.getElementById('p_bar').style.backgroundColor = col;
+
+  var ul = document.getElementById('acciones');
+  ul.innerHTML = '';
+  for (var i=0; i<act.length; i++) {
+    var li = document.createElement('li');
+    li.textContent = act[i];
+    ul.appendChild(li);
+  }
+}
+
+function imprimirReporte() {
+  window.focus();
+  setTimeout(function() { window.print(); }, 150);
+}
+
+function descargarTxt() {
+  var hc = document.getElementById('hc').value || 'HC';
+  var contenido = [
+    "============================================================",
+    "DICTAMEN CLÍNICO AUTOMATIZADO SaMD - SNC PEDIATRÍA",
+    "============================================================",
+    "Paciente / HC : " + hc + " (" + document.getElementById('edad').value + " meses)",
+    "Fecha         : " + new Date().toLocaleString('es-CO'),
+    "------------------------------------------------------------",
+    "1. Nodos del Algoritmo:",
+    "   - Panel FilmArray ME : " + document.getElementById('fa').value,
+    "   - Puntaje BMS (0-4)  : " + document.getElementById('v_bms').textContent + " (" + document.getElementById('s_bms').textContent + ")",
+    "   - Leucocitos en LCR  : " + document.getElementById('s_pleo').textContent,
+    "   - PCR Sérica         : " + document.getElementById('s_pcr').textContent,
+    "------------------------------------------------------------",
+    "2. Ruta y Decisión Terapéutica:",
+    "   - Ruta Flujograma    : " + document.getElementById('b_ruta').textContent,
+    "   - Conducta Principal : " + document.getElementById('b_tit').textContent,
+    "   - Justificación      : " + document.getElementById('b_res').textContent,
+    "   - Oportunidad Desescalamiento ABX: " + document.getElementById('p_txt').textContent,
+    "------------------------------------------------------------",
+    "AVISO LEGAL: Esta herramienta de soporte a la decisión clínica (CDSS) se basa en la validación retrospectiva de marcadores en LCR. No reemplaza el juicio clínico del profesional tratante, quien asume la responsabilidad final de la terapia instaurada y el manejo del paciente.",
+    "============================================================"
+  ].join("\n");
+
+  var blob = new Blob([contenido], {type: "text/plain;charset=utf-8"});
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "Dictamen_SaMD_" + hc + ".txt";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function preset(p) {
+  document.getElementById('toxico').checked = false;
+  document.getElementById('inmuno').checked = false;
+  document.getElementById('gram').value = '0';
+  document.getElementById('fiebre12').value = 'si';
+
+  if (p==='ev0') { document.getElementById('fa').value='ENTEROVIRUS'; document.getElementById('leuc_lcr').value=95; document.getElementById('pcr').value=0.30; document.getElementById('anc_lcr').value=20; document.getElementById('prot_lcr').value=40; document.getElementById('anc_san').value=6000; }
+  if (p==='ev1') { document.getElementById('fa').value='ENTEROVIRUS'; document.getElementById('leuc_lcr').value=220; document.getElementById('pcr').value=0.45; document.getElementById('anc_lcr').value=120; document.getElementById('prot_lcr').value=92; document.getElementById('anc_san').value=7200; }
+  if (p==='ev12') { document.getElementById('fa').value='ENTEROVIRUS'; document.getElementById('fiebre12').value='no'; document.getElementById('leuc_lcr').value=60; document.getElementById('pcr').value=0.20; document.getElementById('anc_lcr').value=15; document.getElementById('prot_lcr').value=35; document.getElementById('anc_san').value=6500; }
+  if (p==='bact') { document.getElementById('fa').value='BACT_MENINGO'; document.getElementById('leuc_lcr').value=1600; document.getElementById('pcr').value=14.2; document.getElementById('gram').value='1'; document.getElementById('anc_lcr').value=1400; document.getElementById('prot_lcr').value=150; document.getElementById('anc_san').value=15000; document.getElementById('toxico').checked=true; }
+  if (p==='hsv') { document.getElementById('fa').value='HSV_1'; document.getElementById('leuc_lcr').value=80; document.getElementById('pcr').value=0.40; document.getElementById('anc_lcr').value=10; document.getElementById('prot_lcr').value=65; document.getElementById('anc_san').value=5800; }
+  if (p==='multi') { document.getElementById('fa').value='MULTI_BACT'; document.getElementById('leuc_lcr').value=950; document.getElementById('pcr').value=6.80; document.getElementById('gram').value='1'; document.getElementById('anc_lcr').value=820; document.getElementById('prot_lcr').value=110; document.getElementById('anc_san').value=13200; }
+  if (p==='gris0') { document.getElementById('fa').value='NEGATIVO'; document.getElementById('leuc_lcr').value=70; document.getElementById('pcr').value=0.35; document.getElementById('anc_lcr').value=10; document.getElementById('prot_lcr').value=48; document.getElementById('anc_san').value=5900; }
+  if (p==='gris1') { document.getElementById('fa').value='NEGATIVO'; document.getElementById('leuc_lcr').value=380; document.getElementById('pcr').value=5.60; document.getElementById('anc_lcr').value=290; document.getElementById('prot_lcr').value=115; document.getElementById('anc_san').value=12500; }
+  calc();
+}
+
+// ============================================================================
+// TELEMETRÍA DE VISITAS: CONTADOR GLOBAL + DETECCIÓN DE BOTS / AGENTES DE IA
+// ============================================================================
+function registrarVisitaYAgente() {
+  var ua = navigator.userAgent || '';
+  var patronIA = /(GPTBot|ChatGPT-User|OAI-SearchBot|ClaudeBot|Claude-Web|anthropic-ai|Google-Extended|GoogleOther|PerplexityBot|Bytespider|CCBot|Cohere-ai|Meta-ExternalAgent|FacebookBot|Amazonbot|Applebot-Extended|YouBot|Diffbot|HeadlessChrome|PhantomJS|Playwright|Puppeteer|Selenium)/i;
+  var esIA = patronIA.test(ua) || navigator.webdriver === true;
+
+  var elTipo = document.getElementById('agent_type');
+  var elUa = document.getElementById('agent_ua');
+  if (esIA) {
+    elTipo.textContent = '🤖 Agente IA / Crawler Detectado';
+    elTipo.style.color = '#f472b6';
+  } else {
+    elTipo.textContent = '👨‍⚕️ Navegador Clínico (Humano)';
+    elTipo.style.color = '#4ade80';
+  }
+  elUa.textContent = ua.substring(0, 58) + (ua.length > 58 ? '...' : '');
+
+  // Contadores persistentes locales + sincronización con API pública (CounterAPI) para GitHub Pages
+  var localHuman = parseInt(localStorage.getItem('samd_visitas_human') || '1', 10);
+  var localAI = parseInt(localStorage.getItem('samd_visitas_ai') || '0', 10);
+
+  if (esIA) {
+    localAI += 1;
+    localStorage.setItem('samd_visitas_ai', localAI);
+  } else {
+    if (!sessionStorage.getItem('samd_sesion_contada')) {
+      localHuman += 1;
+      localStorage.setItem('samd_visitas_human', localHuman);
+      sessionStorage.setItem('samd_sesion_contada', '1');
+    }
+  }
+
+  var totalLocal = localHuman + localAI;
+  document.getElementById('cnt_human').textContent = localHuman.toLocaleString('es-CO');
+  document.getElementById('cnt_ai').textContent = localAI.toLocaleString('es-CO');
+  document.getElementById('cnt_total').textContent = totalLocal.toLocaleString('es-CO');
+
+  // Contador global en la nube (cuando se aloja en GitHub Pages)
+  var endpointHuman = 'https://api.counterapi.dev/v1/andrescifuentes_samd_snc/visitas_humanos/up';
+  var endpointAI = 'https://api.counterapi.dev/v1/andrescifuentes_samd_snc/visitas_ia/up';
+  var urlActiva = esIA ? endpointAI : endpointHuman;
+
+  fetch(urlActiva)
+    .then(function(r) { return r.json(); })
+    .then(function(data) {
+      if (data && typeof data.count === 'number') {
+        if (esIA) {
+          document.getElementById('cnt_ai').textContent = data.count.toLocaleString('es-CO');
+        } else {
+          document.getElementById('cnt_human').textContent = data.count.toLocaleString('es-CO');
+        }
+        var h = parseInt(document.getElementById('cnt_human').textContent.replace(/\D/g,''), 10) || localHuman;
+        var a = parseInt(document.getElementById('cnt_ai').textContent.replace(/\D/g,''), 10) || localAI;
+        document.getElementById('cnt_total').textContent = (h + a).toLocaleString('es-CO');
+      }
+    })
+    .catch(function() {
+      // Modo offline / local file:// mantiene el conteo localStorage sin errores
+    });
+}
+
+window.onload = function() {
+  calc();
+  registrarVisitaYAgente();
+};
+</script>
+</body>
+</html>
